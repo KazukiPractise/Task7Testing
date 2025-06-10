@@ -37,23 +37,23 @@ public class PlaceholderTest {
 
     @Test
     public void getPostByInvalidId_shouldReturn404() {
-        RestAssured.given().
-                baseUri(BASE_URL).
-                when().
-                get("/posts/9999").
-                then().
-                statusCode(404).
-                body(Matchers.equalTo("{}")); // empty body
+        Response response = RestAssured.given()
+                .baseUri(BASE_URL)
+                .when()
+                .get("/posts/9999");
+
+        assertEquals(404, response.getStatusCode(), "Expected 404 Not Found");
+        assertEquals("{}", response.getBody().asString(), "Expected empty JSON object as response");
     }
 
     @Test
     public void getFromInvalidEndpoint_shouldReturn404() {
-        RestAssured.given().
-                baseUri(BASE_URL).
-                when().
-                get("/invalid-endpoint").
-                then().
-                statusCode(404);
+        Response response = RestAssured.given()
+                .baseUri(BASE_URL)
+                .when()
+                .get("/invalid-endpoint");
+
+        assertEquals(404, response.getStatusCode(), "Expected 404 from invalid endpoint");
     }
     @Test
     public void getCommentsForPost_shouldReturnValidComments() {
@@ -87,6 +87,7 @@ public class PlaceholderTest {
                 .get("/posts/1");
 
         assertEquals(200, response.getStatusCode(), "Status code should be 200");
+
         int userId = response.jsonPath().getInt("userId");
         String title = response.jsonPath().getString("title");
 
